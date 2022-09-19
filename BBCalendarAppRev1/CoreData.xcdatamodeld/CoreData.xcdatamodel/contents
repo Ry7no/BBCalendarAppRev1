@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21G83" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="EventEntity" representedClassName="EventEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="eventCategory" optional="YES" attributeType="String"/>
+        <attribute name="eventColorCode" optional="YES" attributeType="String"/>
+        <attribute name="eventDateFrom" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="eventDateTo" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="eventDescription" optional="YES" attributeType="String"/>
+        <attribute name="eventTitle" optional="YES" attributeType="String"/>
+        <attribute name="isCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+    </entity>
+    <elements>
+        <element name="EventEntity" positionX="-63" positionY="-18" width="128" height="134"/>
+    </elements>
+</model>
