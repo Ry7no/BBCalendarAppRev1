@@ -49,7 +49,7 @@ class SQLiteDatabase {
 }
 
 class SQLiteCommands {
-    
+
     static var eventsTable = Table("eventsTable")
     
     static let id = Expression<UUID>("id")
@@ -62,6 +62,20 @@ class SQLiteCommands {
     static let isCompleted = Expression<Bool>("isCompleted")
     
     @Published var fetchedEvents: [Event] = []
+    
+    static func deleteAllData() {
+        guard let db = SQLiteDatabase.shared.db else {
+            print("DB connection error")
+            return
+        }
+        
+        do {
+            try db.scalar("DELETE FROM eventsTable")
+//            try db.run(eventsTable.delete())
+        } catch {
+            print("Table already exists: \(error.localizedDescription)")
+        }
+    }
     
     static func createTable() {
         guard let db = SQLiteDatabase.shared.db else {
@@ -127,6 +141,7 @@ class SQLiteCommands {
                 eventModel.id = try rowValue.get(id)
                 eventModel.eventTitle = try rowValue.get(eventTitle)
                 eventModel.eventDescription = try rowValue.get(eventDescription)
+                eventModel.eventColorCode = try rowValue.get(eventColorCode)
                 eventModel.eventDateFrom = try rowValue.get(eventDateFrom)
             })
             
@@ -213,7 +228,11 @@ class SQLiteCommands {
         } catch {
             print("Delete Event error: \(error.localizedDescription)")
         }
-        getEvents()
+        
+        
+//        eventManager.allEvents = SQLiteCommands.getEvents()
+//        eventManager.filterTodayEvents()
+//        getEvents()
 
     }
     

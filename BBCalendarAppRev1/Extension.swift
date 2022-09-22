@@ -37,3 +37,13 @@ extension UIApplication {
         window.addGestureRecognizer(tapGesture)
     }
 }
+
+extension Date {
+    func withAddedMinutes(minutes: Double) -> Date {
+         addingTimeInterval(minutes * 60)
+    }
+
+    func withAddedHours(hours: Double) -> Date {
+         withAddedMinutes(minutes: hours * 60)
+    }
+}

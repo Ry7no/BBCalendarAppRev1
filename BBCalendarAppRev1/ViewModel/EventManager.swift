@@ -109,46 +109,46 @@ class EventManager: ObservableObject {
         return formatter.string(from: date)
     }
     
-    func getColor(colorCode: String) -> Color {
-        
-        var color: Color = .white
-        
-        switch colorCode {
-        case "1":
-            color = Color("BgRed")
-        case "2":
-            color = Color("BgGreen")
-        case "3":
-            color = Color("BgBlue")
-        default:
-            break
-        }
-        
-        return color
-    }
+//    func getColor(colorCode: String) -> Color {
+//
+//        var color: Color = .white
+//
+//        switch colorCode {
+//        case "1":
+//            color = Color("BgRed")
+//        case "2":
+//            color = Color("BgGreen")
+//        case "3":
+//            color = Color("BgBlue")
+//        default:
+//            break
+//        }
+//
+//        return color
+//    }
     
     func getNearDate(today: Date) -> Date {
         
         let date = DateManager.shared.dateToStringGetDate(date: today)
         var hour = Int(DateManager.shared.dateToStringGetHour(date: today))!
-        var min = Int(DateManager.shared.dateToStringGetMin(date: today))!
+        let min = Int(DateManager.shared.dateToStringGetMin(date: today))!
+        var nowString = ""
         
         switch min {
         case 0..<15:
-            min = 15
+            nowString = date + "\(hour)" + "1500"
         case 15..<30:
-            min = 30
+            nowString = date + "\(hour)" + "3000"
         case 30..<45:
-            min = 45
+            nowString = date + "\(hour)" + "4500"
         case 45..<59:
             hour = hour + 1
+            nowString = date + "\(hour)" + "0000"
         default:
             break
         }
         
-        
-        let now = date + "\(hour)" + "\(min)00"
-        let nowDate = DateManager.shared.string14ToDate(dateStr: now)
+        let nowDate = DateManager.shared.string14ToDate(dateStr: nowString)
         print("Date: \(Date())")
         print("now: \(nowDate)")
         return nowDate

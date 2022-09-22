@@ -13,7 +13,7 @@
 		FD18DBA328D03CCF00026A36 /* DateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD18DBA228D03CCF00026A36 /* DateManager.swift */; };
 		FD18DBA728D0761E00026A36 /* AddEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD18DBA628D0761E00026A36 /* AddEventView.swift */; };
 		FD18DBA928D0AF0D00026A36 /* EventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD18DBA828D0AF0D00026A36 /* EventManager.swift */; };
-		FD18DBD528D38D6B00026A36 /* NewEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD18DBD428D38D6B00026A36 /* NewEventView.swift */; };
+		FD18DBD528D38D6B00026A36 /* EventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD18DBD428D38D6B00026A36 /* EventView.swift */; };
 		FD18DBE528D4F1DC00026A36 /* SqliteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD18DBE428D4F1DC00026A36 /* SqliteManager.swift */; };
 		FD2B3EF628D6324A000287D4 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = FD2B3EF528D6324A000287D4 /* SQLite */; };
 		FD8EC4FA28C9D8C500F4E28C /* BBCalendarAppRev1App.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8EC4F928C9D8C500F4E28C /* BBCalendarAppRev1App.swift */; };
@@ -43,7 +43,7 @@
 		FD18DBA228D03CCF00026A36 /* DateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateManager.swift; sourceTree = "<group>"; };
 		FD18DBA628D0761E00026A36 /* AddEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEventView.swift; sourceTree = "<group>"; };
 		FD18DBA828D0AF0D00026A36 /* EventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventManager.swift; sourceTree = "<group>"; };
-		FD18DBD428D38D6B00026A36 /* NewEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEventView.swift; sourceTree = "<group>"; };
+		FD18DBD428D38D6B00026A36 /* EventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventView.swift; sourceTree = "<group>"; };
 		FD18DBE428D4F1DC00026A36 /* SqliteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SqliteManager.swift; sourceTree = "<group>"; };
 		FD8EC4F628C9D8C500F4E28C /* BBCalendarAppRev1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BBCalendarAppRev1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD8EC4F928C9D8C500F4E28C /* BBCalendarAppRev1App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BBCalendarAppRev1App.swift; sourceTree = "<group>"; };
@@ -119,6 +119,7 @@
 				FD8EC4F928C9D8C500F4E28C /* BBCalendarAppRev1App.swift */,
 				FDFE99A128CEDBD90099FE07 /* Extension.swift */,
 				FD8EC4FD28C9D8C600F4E28C /* Assets.xcassets */,
+				FD18DBA628D0761E00026A36 /* AddEventView.swift */,
 				FD8EC4FF28C9D8C600F4E28C /* Preview Content */,
 			);
 			path = BBCalendarAppRev1;
@@ -139,8 +140,7 @@
 				FD8EC51B28C9DDB200F4E28C /* LoginView.swift */,
 				FDFE99A528CEE2510099FE07 /* CustomTextField.swift */,
 				FDFE99A328CEDE350099FE07 /* HomeView.swift */,
-				FD18DBA628D0761E00026A36 /* AddEventView.swift */,
-				FD18DBD428D38D6B00026A36 /* NewEventView.swift */,
+				FD18DBD428D38D6B00026A36 /* EventView.swift */,
 				FDF89AB128D8464800B218D6 /* EditEventView.swift */,
 			);
 			path = View;
@@ -272,7 +272,7 @@
 			files = (
 				FDFE99A628CEE2510099FE07 /* CustomTextField.swift in Sources */,
 				FD18DBA328D03CCF00026A36 /* DateManager.swift in Sources */,
-				FD18DBD528D38D6B00026A36 /* NewEventView.swift in Sources */,
+				FD18DBD528D38D6B00026A36 /* EventView.swift in Sources */,
 				FDFE99A928CEF6050099FE07 /* LoginManager.swift in Sources */,
 				FDFE99A228CEDBD90099FE07 /* Extension.swift in Sources */,
 				FD8EC51C28C9DDB200F4E28C /* LoginView.swift in Sources */,

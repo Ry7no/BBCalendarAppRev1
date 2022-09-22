@@ -9,45 +9,46 @@ import SwiftUI
 
 struct HomeView: View {
     
-//    @EnvironmentObject private var eventManager: EventManager
-    @StateObject var eventManager: EventManager = EventManager()
+    @EnvironmentObject private var eventManager: EventManager
+//    @StateObject var eventManager: EventManager = EventManager()
 //    @EnvironmentObject private var sqliteManager: SqliteManager
     @Namespace var animation
     
-    @State var isRefreshing: Bool = false
+//    @State var isRefreshing: Bool = false
     
+    @State var isEditing: Bool = false
     @State var selectedEventId: UUID = UUID()
+//    @State var selectedEvent: Event = Event()
     @State var hasSelected: Bool = false
-
     
     var body: some View {
-        
+
         ScrollView(.vertical, showsIndicators: false) {
-            
+
             LazyVStack(spacing: 15, pinnedViews: [.sectionHeaders]) {
-                
+
                 Section {
-                    
+
                     ScrollView(.horizontal, showsIndicators: false) {
-                        
+
                         HStack(spacing: 10) {
-                            
+
                             ForEach(eventManager.currentWeek, id: \.self){ day in
-                                
+
                                 VStack(spacing: 10){
-                                    
+
                                     Text(eventManager.extractDate(date: day, format: "dd"))
                                         .font(.system(size: 15))
                                         .fontWeight(.semibold)
-                                    
+
                                     Text(eventManager.extractDate(date: day, format: "EEE"))
                                         .font(.system(size: 14))
-                                    
+
                                     Circle()
                                         .fill(.white)
                                         .frame(width: 8, height: 8)
                                         .opacity(eventManager.isToday(date: day) ? 1 : 0)
-                                    
+
                                 }
                                 .foregroundStyle(eventManager.isToday(date: day) ? .primary : .secondary)
                                 .foregroundColor(eventManager.isToday(date: day) ? .white : .black)
@@ -71,22 +72,24 @@ struct HomeView: View {
                         }
                         .padding(.horizontal)
                     }
-                    
+
                     EventView()
-                    
+
                 } header: {
-                    
+
                     HeaderView()
                 }
             }
-            
+
         }
         .ignoresSafeArea(.container, edges: .top)
         .overlay (
-            
+
             Button(action: {
                 eventManager.addNewEvent.toggle()
                 eventManager.isRefreshing.toggle()
+                self.isEditing = false
+                self.selectedEventId = UUID()
             }, label: {
                 Image(systemName: "plus")
                     .foregroundColor(.white)
@@ -98,24 +101,24 @@ struct HomeView: View {
             ,alignment: .bottomTrailing
         )
         .sheet(isPresented: $eventManager.addNewEvent) {
-            NewEventView()
-                .onDisappear {
-                    DispatchQueue.main.async{
-                        
-                        eventManager.filteredEvents.removeAll()
-                        eventManager.allEvents = SQLiteCommands.getEvents()
-                        eventManager.filterTodayEvents()
-                    }
-                }
+            
+            BBCalendarAppRev1.EventView(isEditing: $isEditing, selectedEventId: $selectedEventId)
+                .onAppear(perform: UIApplication.shared.addTapGestureRecognizer)
+
         }
-        .onChange(of: eventManager.isRefreshing, perform: { newValue in
-            eventManager.allEvents = SQLiteCommands.getEvents()
-            eventManager.filterTodayEvents()
-        })
         .onAppear {
+            
             SQLiteDatabase.shared.creatTable()
+            
+            withAnimation {
+                DispatchQueue.main.async {
+                    eventManager.allEvents = SQLiteCommands.getEvents()
+                    eventManager.filterTodayEvents()
+                }
+            }
+    
         }
-        
+
     }
     
     func HeaderView() -> some View {
@@ -133,11 +136,15 @@ struct HomeView: View {
             }
             .hLeading()
             
-//            Button  {
-//                SQLiteDatabase.shared.deleteTable()
-//            } label: {
-//                Text("DELETE")
-//            }
+            Button  {
+                SQLiteCommands.deleteAllData()
+                DispatchQueue.main.async {
+                    eventManager.allEvents = SQLiteCommands.getEvents()
+                    eventManager.filterTodayEvents()
+                }
+            } label: {
+                Text("DELETE")
+            }
 
             
             Button {
@@ -173,47 +180,37 @@ struct HomeView: View {
                     .offset(y: 100)
 
             } else {
-                
-//                List {
-//
-//                    ForEach(eventManager.filteredEvents) { event in
-//
-//                        EventCardView(event: event)
-//                            .onLongPressGesture {
-//                                self.selectedEventId = event.id
-//                                self.hasSelected.toggle()
-//                                print(selectedEventId)
-//                            }
-//
-//                    }
-//                    .onDelete(perform: deleteItems)
-//                }
-//                .listStyle(PlainListStyle())
-                
-                
-                
+        
                 ForEach($eventManager.filteredEvents) { $event in
 
                     EventCardView(event: $event)
-                        .onLongPressGesture {
+                        .onLongPressGesture(minimumDuration: 0.2) {
                             self.selectedEventId = event.id
-                            self.hasSelected.toggle()
-                            print(selectedEventId)
-                        }
-                        .onChange(of: eventManager.isRefreshing) { newValue in
+//
+                            self.isEditing = true
+//                            print(selectedEventId)
+                            
+//                            self.selectedEvent = event
 
-                            DispatchQueue.main.async {
-                                eventManager.filteredEvents.removeAll()
-                                eventManager.allEvents = SQLiteCommands.getEvents()
-                                eventManager.filterTodayEvents()
+                            let impactRigid = UIImpactFeedbackGenerator(style: .rigid)
+                            let impactHeavy = UIImpactFeedbackGenerator(style: .heavy)
+                            
+                            impactRigid.impactOccurred()
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                impactHeavy.impactOccurred()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    self.hasSelected.toggle()
+                                }
                             }
-
                         }
 
 
                 }
                 .sheet(isPresented: $hasSelected) {
-                    EditEventView(id: $selectedEventId)
+                    
+                    BBCalendarAppRev1.EventView(isEditing: $isEditing, selectedEventId: $selectedEventId)
+                        .onAppear(perform: UIApplication.shared.addTapGestureRecognizer)
                         .onDisappear {
                             DispatchQueue.main.async {
                                 eventManager.filteredEvents.removeAll()
@@ -221,6 +218,7 @@ struct HomeView: View {
                                 eventManager.filterTodayEvents()
                             }
                         }
+
                 }
             }
 
@@ -382,7 +380,7 @@ struct EventCardView: View {
             VStack(spacing: 10) {
 
                 Circle()
-                    .fill(eventManager.isCurrentHour(date: event.eventDateFrom) ? .black : .clear)
+                    .fill(eventManager.isCurrentHour(date: event.eventDateFrom) ? Color(event.eventColorCode) : .clear)
                     .frame(width: 15, height: 15)
                     .background(Circle().stroke(Color("Purple1"), lineWidth: 2).padding(-3))
                     .scaleEffect(eventManager.isCurrentHour(date: event.eventDateFrom) ? 1 : 0.8)
@@ -434,15 +432,16 @@ struct EventCardView: View {
             .padding(.horizontal, 20)
             .hLeading()
             .background(
-                    eventManager.getColor(colorCode: event.eventColorCode).cornerRadius(25)
-                        .opacity(eventManager.isCurrentHour(date: event.eventDateFrom) ? 1 : 0)
-
+                Color(event.eventColorCode).cornerRadius(25)
+                    .opacity(eventManager.isCurrentHour(date: event.eventDateFrom) ? 1 : 0)
+                
             )
             .overlay(RoundedRectangle(cornerRadius: 22).stroke(lineWidth: 3).foregroundColor(Color.white).padding(3).opacity(eventManager.isCurrentHour(date: event.eventDateFrom) ? 1 : 0))
 
             .overlay(RoundedRectangle(cornerRadius: 25).stroke(lineWidth: 4).foregroundColor(Color("Purple1")).opacity(eventManager.isCurrentHour(date: event.eventDateFrom) ? 1 : 0))
         }
-        .background(Color.white)
+        .padding(5)
+        .background(Color.white.cornerRadius(eventManager.isCurrentHour(date: event.eventDateFrom) ? 25 : 10))
         .hLeading()
         .offset(x: offset)
         .background {
@@ -454,29 +453,25 @@ struct EventCardView: View {
                 VStack(alignment: .center){
 
                     Button {
+                        
                         SQLiteCommands.deleteEvent(idValue: event.id)
-                        eventManager.filteredEvents = []
-//                        eventManager.isRefreshing.toggle()
-//                        eventManager.updateAllEvents()
+                        
+                        if let index = eventManager.filteredEvents.firstIndex(where: { $0.id == event.id}) {
+                            eventManager.filteredEvents.remove(at: index)
+                        }
+
                     } label: {
                         Image(systemName: "trash.fill")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 20)
+                            .frame(width: 16, height: 16)
                     }
                 }
                 .foregroundColor(.white)
-                .padding(.horizontal, 30)
+                .padding(.horizontal, 27)
             }
-//            .onChange(of: isRe, perform: { newValue in
-//                DispatchQueue.main.async{
-//                    eventManager.filteredEvents.removeAll()
-//                    eventManager.allEvents = SQLiteCommands.getEvents()
-//                    eventManager.filterTodayEvents()
-//                }
-//            })
-                .cornerRadius(10)
-            //            .padding(.horizontal, 2)
+            .cornerRadius(eventManager.isCurrentHour(date: event.eventDateFrom) ? 26 : 11)
+
         }
         .gesture(
 
@@ -489,14 +484,15 @@ struct EventCardView: View {
 
                     let translation = value.translation.width
 
-                    if translation < 0 && -translation > 80 && -translation < UIScreen.main.bounds.width / 2 {
-                        offset = -80
+                    if translation < 0 && -translation > 70 && -translation < UIScreen.main.bounds.width / 2 {
+                        offset = -70
                     }else if translation < 0 && -translation > UIScreen.main.bounds.width / 2 {
                         offset = -800
                         SQLiteCommands.deleteEvent(idValue: event.id)
-                        eventManager.filteredEvents = []
-//                        eventManager.isRefreshing.toggle()
-//                        eventManager.updateAllEvents()
+                        if let index = eventManager.filteredEvents.firstIndex(where: { $0.id == event.id}) {
+                            eventManager.filteredEvents.remove(at: index)
+                        }
+
                     }else{
                         offset = 0
                     }
@@ -509,17 +505,17 @@ struct EventCardView: View {
             offset = (gestureOffset + lastStoredOffset) > 0 ? 0 : (gestureOffset + lastStoredOffset)
         }
 
-//        .onAppear {
-//            eventManager.filteredEvents = []
-//            eventManager.allEvents = SQLiteCommands.getEvents()
-//            eventManager.filterTodayEvents()
-//        }
+        .onAppear {
+            DispatchQueue.main.async {
+                eventManager.allEvents = SQLiteCommands.getEvents()
+                eventManager.filterTodayEvents()
+            }
+        }
     }
 
     func deleteItem(indexSet: IndexSet) {
         eventManager.filteredEvents.remove(atOffsets: indexSet)
     }
-
 
 }
 
